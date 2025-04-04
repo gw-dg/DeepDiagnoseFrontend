@@ -4,11 +4,24 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 
-function Search({ setPredictedDiseases }) {
-  const [input, setInput] = useState("");
+interface Prediction {
+  Disease: string;
+  Probability: number;
+  Description: string;
+  Precautions: string[];
+  Diet: string[] | [string];
+  Medications: string[] | [string];
+}
+
+interface SearchProps {
+  setPredictedDiseases: React.Dispatch<React.SetStateAction<Prediction[]>>;
+}
+
+function Search({ setPredictedDiseases }: SearchProps) {
+  const [input, setInput] = useState<string>("");
   const [symptoms, setSymptoms] = useState<string[]>([]);
 
-  const handleAdd = () => {
+  const handleAdd = (): void => {
     console.log("clicked add");
     if (input.trim()) {
       const newInput = " " + input.trim();
@@ -22,11 +35,11 @@ function Search({ setPredictedDiseases }) {
     console.log(symptoms);
   };
 
-  const handleRemoveSymptom = (symptom: string) => {
+  const handleRemoveSymptom = (symptom: string): void => {
     setSymptoms(symptoms.filter((s) => s !== symptom));
   };
 
-  const predictDisease = async () => {
+  const predictDisease = async (): Promise<void> => {
     try {
       const response = await axios.post(
         `${import.meta.env.VITE_BACKEND_URL}/predict`,
@@ -53,6 +66,7 @@ function Search({ setPredictedDiseases }) {
         <Input
           type="email"
           placeholder="Enter symptoms here..."
+          value={input}
           onChange={(e) => setInput(e.target.value)}
           className="dark:bg-zinc-900 dark:text-white dark:placeholder:text-zinc-400"
         />
